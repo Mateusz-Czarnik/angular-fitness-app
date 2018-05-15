@@ -3,14 +3,24 @@ import {Store} from "store";
 import {AuthService, User} from "../../../auth/shared/service/auth/auth.service";
 import {Observable} from "rxjs/Observable";
 import {Subscription} from "rxjs/Subscription";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-root',
     styleUrls: ['app.component.scss'],
     template: `
         <div>
-            {{ user$ | async | json }}
-            Hello Ultimate Angular!
+            <app-header
+                    [user]="user$ | async"
+                    (logout)="onLogout()"
+            >
+
+            </app-header>
+            <app-nav
+                    *ngIf="(user$ | async)?.authenticated"
+            >
+
+            </app-nav>
             <div class="wrapper">
                 <router-outlet></router-outlet>
             </div>
@@ -24,6 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store,
         private authService: AuthService,
+        private router: Router
     ) {
     }
 
@@ -34,5 +45,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+    }
+
+    async onLogout() {
+        console.log('Logout.')
+        await this.authService.logoutUser()
+        this.router.navigate(['/auth/login'])
     }
 }
