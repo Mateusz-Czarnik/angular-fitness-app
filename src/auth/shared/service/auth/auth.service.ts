@@ -25,15 +25,23 @@ export class AuthService {
                 email: next.email,
                 uid: next.uid,
                 authenticated: true
-            }
+            };
             this.store.set('user', user);
 
         });
 
     constructor(
-        private af: AngularFireAuth,
         private store: Store,
+        private af: AngularFireAuth
     ) {
+    }
+
+    get authState(){
+        return this.af.authState;
+    }
+
+    get user(){
+        return this.af.auth.currentUser
     }
 
     createUser(email: string, password: string) {
