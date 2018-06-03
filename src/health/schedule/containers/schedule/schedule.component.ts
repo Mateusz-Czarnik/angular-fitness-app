@@ -11,6 +11,7 @@ import {Subscription} from "rxjs/Subscription";
       <div class="schedule">
           <schedule-calendar
             [date]="date$ | async"
+            (change)="changeDate($event)"
           ></schedule-calendar>
       </div>
   `
@@ -24,6 +25,10 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     private scheduleService: ScheduleService,
     private store: Store
   ) {
+  }
+
+  changeDate(date: Date) {
+    this.scheduleService.updateDate(date);
   }
 
   ngOnInit() {
