@@ -24,7 +24,7 @@ import {Workout} from "../../../shared/services/workouts/workouts.service";
                       <h3>Workout name</h3>
                       <input
                         type="text"
-                        placeholder="e.g. English breakfast"
+                        [placeholder]="placeholder"
                         formControlName="name"
                       >
                       <div class="error" *ngIf="required">
@@ -33,14 +33,46 @@ import {Workout} from "../../../shared/services/workouts/workouts.service";
                   </label>
                   <label>
                       <h3>Type</h3>
-                      <p>{{ form.value | json }}</p>
-                      <workout-type
-                        formControlName="type"
-                      >
-                      </workout-type>
+                      <workout-type formControlName="type"></workout-type>
                   </label>
               </div>
+              <div class="workout-form__details">
+                  <div *ngIf="form.get('type').value === 'strength'">
+                      <div
+                        class="workout-form__fields"
+                        formGroupName="strength"
+                      >
+                          <label>
+                              <h3>Reps</h3>
+                              <input type="number" formControlName="reps">
+                          </label>
+                          <label>
+                              <h3>Sets</h3>
+                              <input type="number" formControlName="sets">
+                          </label>
+                          <label>
+                              <h3>weight <span>(kg)</span></h3>
+                              <input type="number" formControlName="weight">
+                          </label>
 
+                      </div>
+                  </div>
+                  <div *ngIf="form.get('type').value === 'endurance'">
+                      <div
+                        class="workout-form__fields"
+                        formGroupName="endurance"
+                      >
+                          <label>
+                              <h3>Distance <span>(km)</span></h3>
+                              <input type="number" formControlName="distance">
+                          </label>
+                          <label>
+                              <h3>Duration</h3>
+                              <input type="number" formControlName="duration">
+                          </label>
+                      </div>
+                  </div>
+              </div>
               <div class="workout-form__submit">
                   <div>
                       <button
@@ -108,6 +140,15 @@ export class WorkoutFormComponent implements OnChanges {
   form = this.fb.group({
     name: ['', Validators.required],
     type: 'strength',
+    strength: this.fb.group({
+      reps: 0,
+      sets: 0,
+      weight: 0
+    }),
+    endurance: this.fb.group({
+      distance: 0,
+      duration: 0
+    })
   });
 
   constructor(
@@ -115,34 +156,19 @@ export class WorkoutFormComponent implements OnChanges {
   ) {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    // if (this.workout && this.workout.name) {
-    //   const value = this.workout;
-    //
-    //   this.exists = true;
-    //   this.emptyIngredients()
-    //   this.form.patchValue(value)
-    //
-    // }
+  get placeholder() {
+    return `e.g. ${this.form.get('type').value === 'strength' ? 'Benchpress' : 'Treadmill'}`
   }
 
-  // emptyIngredients() {
-  //   while (this.ingredients.controls.length) {
-  //     this.ingredients.removeAt(0);
-  //   }
-  // }
 
-  // get ingredients() {
-  //   return this.form.get('ingredients') as FormArray;
-  // }
-  //
-  // addIngredient() {
-  //   this.ingredients.push(new FormControl())
-  // }
-  //
-  // removeIngredient(index: number) {
-  //   this.ingredients.removeAt(index)
-  // }
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.workout && this.workout.name) {
+      const value = this.workout;
+
+      this.exists = true;
+      this.form.patchValue(value)
+    }
+  }
 
   toggle() {
     this.toggled = !this.toggled
